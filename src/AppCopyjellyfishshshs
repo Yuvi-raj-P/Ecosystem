@@ -1,0 +1,105 @@
+import { Canvas, useFrame } from "@react-three/fiber";
+import { OrbitControls, Sphere, Text, Clouds, Cloud} from "@react-three/drei";
+import { CustomStars } from "./components/CustomStars";
+import { CustomWater } from './components/CustomWater';
+import { Suspense, useState, useEffect, useRef } from "react";
+import { Gradient, LayerMaterial } from "lamina";
+import * as THREE from "three";
+import { Jellyfish } from "./components/Jellyfish";
+import { LoadingScreen } from "./components/loadingScreen";
+import { Bloom, EffectComposer, ColorAverage, SMAA } from "@react-three/postprocessing";
+import { Fish } from "./components/fish";
+import { FogVolume } from './components/fogVolume'
+
+function App() {
+  const [loading, setLoading] = useState(true);
+  const [mouse, setMouse] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  const jellyfishPositions = [
+    { position: [19, 9.0, 22.2], scale: [10, 10,10], rotation: [0.2, 0, 0.5] },
+    { position: [-8, 9.0, 22.2], scale: [8, 8,8], rotation: [0.5, 20, 0.5] },
+    { position: [-14, -4.0, 32.2], scale: [9, 9,9], rotation: [0.2, 0, 0.2] },
+    { position: [-20, 16.0, 15.2], scale: [5, 5,5], rotation: [0.2, 0.4, 0.2] },
+    { position: [-14, 5.0, 15.2], scale: [5, 5,5], rotation: [0.2, 0.4, 0.2] },
+    { position: [-4, 2.0, 15.2], scale: [9, 9,9], rotation: [0.2, 0.4, 0.2] },
+    { position: [-28, 6.0, 15.2], scale: [10, 10,10], rotation: [0.2, 0.4, 0.2] },
+    { position: [12, 2.0, 15.2], scale: [10, 10,10], rotation: [0.5, 0.4, 0.4] },
+    { position: [12, -2.0, 35.2], scale: [10, 10,10], rotation: [0.5, 0.4, 0.4] },
+    //Second Loop Cover
+   
+    { position: [-28, -2.0, 31.2], scale: [10, 10,10], rotation: [0.5, 0.4, 0.4] },
+    { position: [-33, 2.0, 31.2], scale: [10, 10,10], rotation: [0.5, 0.4, 0.4] },
+    
+  ];
+
+  // Define the path
+ 
+
+  return (
+    <div id="canvas-container" style={{height: "100vh", width: "100vw"}}>
+      {loading && <LoadingScreen />}
+      <Canvas gl={{ antialias: false, toneMapping: THREE.ACESFilmicToneMapping }}
+      linear camera={{ position: [3.36, 1, 50.02], rotation: [0.16, 0.16, -0.04], fov: 45, near:0.1 }} >
+        
+        <Clouds material={THREE.MeshBasicMaterial}>
+          <Cloud seed={1} bounds={100} segments={1} volume={80} opacity={0.2} color={'#3a64f0'} speed={0} scale={[2,1,1]} position={[-70, 80, -80]} />
+          <Cloud seed={3} bounds={100} segments={1} volume={80} opacity={0.2} color={'#5c7ff7'} speed={0} scale={[1,1,1]} position={[-120, 90, -80]} />
+          <Cloud seed={3} bounds={100} segments={1} volume={80} opacity={0.2} color={'#3a64f0'} speed={0} scale={[2,1,1]} position={[-40, 60, -80]} />
+          <Cloud seed={3} bounds={100} segments={1} volume={80} opacity={0.2} color={'#3a64f0'} speed={0} scale={[2,1,1]} position={[40, 60, -80]} />
+        </Clouds>
+
+        
+
+        <ambientLight intensity={20} color="#ffffff" />
+        <EffectComposer>
+          <Bloom 
+            intensity={2}
+            luminanceThreshold={0.15}
+            luminanceSmoothing={0.1}
+            height={300}
+            radius={0.9}
+
+          />
+        </EffectComposer>
+        <CustomStars />
+        
+        <Sphere scale={[900, 900, 900]} rotation-y={-90}>
+          <LayerMaterial 
+            lighting="physical" 
+            transmission={1} 
+            side={THREE.BackSide}
+            envMapIntensity={0}
+            roughness={1}
+            metalness={0}
+          >
+            <Gradient colorA={"#082ca7"} colorB={"#040e6d"} axes="y" start={0.1} end={0.5}/>
+          </LayerMaterial>
+        </Sphere>
+        
+        <Suspense fallback={null}>
+        <Fish scale={[0.03,0.03,0.03]}/>
+          {jellyfishPositions.map((config, index) => (
+            <Jellyfish 
+              key={index}
+              position={config.position}
+              scale={config.scale}
+              rotation={config.rotation}
+            />
+            
+          ))}
+        </Suspense>
+        <CustomWater />
+        
+      </Canvas>
+    </div>
+  )
+}
+export default App

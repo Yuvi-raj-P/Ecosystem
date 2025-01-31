@@ -1,0 +1,122 @@
+import { Canvas, useFrame , extend} from "@react-three/fiber";
+import { OrbitControls, Sphere, Text, Clouds, Cloud} from "@react-three/drei";
+import { CustomStars } from "./components/CustomStars";
+import { CustomWater } from './components/CustomWater';
+import { Suspense, useState, useEffect, useRef } from "react";
+import { Gradient, LayerMaterial } from "lamina";
+import * as THREE from "three";
+import { Jellyfish } from "./components/Jellyfish";
+import { LoadingScreen } from "./components/loadingScreen";
+import { Bloom, EffectComposer, ColorAverage, SMAA } from "@react-three/postprocessing";
+import { Fish } from "./components/fish";
+import { Model as ForegroundRock2 } from '../public/ForegroundRock2';
+import { Selection, Select } from "@react-three/postprocessing";
+
+extend({ WebGLRenderer: THREE.WebGLRenderer });
+
+
+function App() {
+  const [loading, setLoading] = useState(true);
+  const [mouse, setMouse] = useState({ x: 0, y: 0 });
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  const jellyfishPositions = [
+    { position: [19, 9.0, 22.2], scale: [10, 10,10], rotation: [0.2, 0, 0.5] },
+    { position: [-8, 9.0, 22.2], scale: [8, 8,8], rotation: [0.5, 20, 0.5] },
+    { position: [-14, -4.0, 32.2], scale: [9, 9,9], rotation: [0.2, 0, 0.2] },
+    { position: [-20, 16.0, 15.2], scale: [5, 5,5], rotation: [0.2, 0.4, 0.2] },
+    { position: [-14, 5.0, 15.2], scale: [5, 5,5], rotation: [0.2, 0.4, 0.2] },
+    { position: [-4, 2.0, 15.2], scale: [9, 9,9], rotation: [0.2, 0.4, 0.2] },
+    { position: [-28, 6.0, 15.2], scale: [10, 10,10], rotation: [0.2, 0.4, 0.2] },
+    { position: [12, 2.0, 15.2], scale: [10, 10,10], rotation: [0.5, 0.4, 0.4] },
+    { position: [12, -2.0, 35.2], scale: [10, 10,10], rotation: [0.5, 0.4, 0.4] },
+    //Second Loop Cover
+   
+    { position: [-28, -2.0, 31.2], scale: [10, 10,10], rotation: [0.5, 0.4, 0.4] },
+    { position: [-33, 2.0, 31.2], scale: [10, 10,10], rotation: [0.5, 0.4, 0.4] },
+    
+  ];
+
+  // Define the path
+ 
+
+  return (
+    <div id="canvas-container" style={{height: "100vh", width: "100vw"}}>
+      {loading && <LoadingScreen />}
+      <Canvas style={{backgroundColor: '#010454'}} gl={{ 
+    antialias: true,
+    toneMapping: THREE.NoToneMapping,
+    toneMappingExposure: 0.3,
+    pixelRatio: window.devicePixelRatio
+  }}
+  linear 
+  camera={{ 
+    position: [30, 0, 100],
+    rotation: [0.34, 0, 0],
+    fov: 60, 
+    near: 1,
+    far: 20000,
+    aspect: window.innerWidth / window.innerHeight
+  }}>
+        
+        <OrbitControls />
+        <ambientLight intensity={0.1} color="#1a237e" />
+        <directionalLight 
+        color="#969feb"
+  intensity={2} 
+  position={[10, 10, -20]} 
+  
+  distance={500}              
+  decay={1}                    
+  penumbra={10}    
+/>
+        <Selection>
+    <EffectComposer>
+      <Select enabled>
+        <CustomStars />
+        <CustomWater />
+      </Select>
+      <Bloom 
+        intensity={2}
+        luminanceThreshold={0.15}
+        luminanceSmoothing={0.1}
+        height={300}
+        radius={0.9}
+      />
+    </EffectComposer>
+  </Selection>       
+        <Sphere scale={[900, 900, 900]} rotation-y={-90}>
+          <LayerMaterial 
+            lighting="physical" 
+            transmission={1} 
+            side={THREE.BackSide}
+            envMapIntensity={4}
+            roughness={0.2}
+            metalness={0}
+          >
+            <Gradient colorA={"#07249b"} colorB={"#020339"} axes="y" start={0} end={0.8}/>
+          </LayerMaterial>
+        </Sphere>
+        
+        <ForegroundRock2 
+          position={[6, 0.8, 45]} 
+          scale={[0.7,0.7, 0.7]} 
+          rotation={[0, 180, 0]}
+        />
+        <ForegroundRock2 
+          position={[-40, 0.8, 10]} 
+          scale={[6, 6, 5]} 
+          rotation={[0, 90, 90]}
+        />
+      </Canvas>
+    </div>
+  )
+}
+export default App

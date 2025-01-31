@@ -1,0 +1,26 @@
+.svg-container {
+    position: fixed;
+    top: 50%;
+    left: 40%;
+    width: 100vw;
+    height: 100vh;
+    z-index: 10;
+    pointer-events: none;
+  }
+  #Layer_1{
+    left: 50%;
+    top: 50%;
+  }
+  
+  .hidden {
+    opacity: 0;
+  }
+  
+  .visible {
+    opacity: 1;
+    transition: opacity 0.5s ease-in-out;
+  }
+  
+  .spacing {
+    margin-left: 10px;
+  }
