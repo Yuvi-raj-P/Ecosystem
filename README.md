@@ -5,5 +5,7 @@ Sorry I couldnot deploy the site on time because high seas was ending and I am c
 
 So below are the demos for the projects. Please vote this is been a crazy amount of work!
 
+AI was used to pinpoint an issue regarding too much reflection of water but was of no use with the end result. Three.js Discourse https://discourse.threejs.org/u/yuvi_raj/activity was used for many problems I had! Great community! 
+
 ![image](https://github.com/user-attachments/assets/bb32f2d8-d39a-4e83-ae5d-fdc925e0d0a4)
 [screen-capture (2).webm](https://github.com/user-attachments/assets/8ac90bfe-ca29-41dc-a866-967f872e18b7)
